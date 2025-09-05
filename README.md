@@ -1,85 +1,65 @@
-# pdf2png
+# PdfToImages
 
-`pdf2png` is a fast, cross-platform command-line tool written in Go that converts PDF documents into high-quality PNG images. It provides adjustable DPI settings for full quality control.
+A PDF to PNG converter written in Go.
 
-## Features
+## Requirements
 
-* Converts each page of a PDF into a separate PNG image.
-* Adjustable DPI for controlling output image quality.
-* Cross-platform support (Windows, macOS, Linux).
-* Written in Go for simplicity and performance.
-* Includes tests to ensure reliability.
+- Go >= 1.25.0
+- Make
 
-## Installation
+## Quick Start
 
-### Using Go
-
-If you have Go installed, you can build and install `pdf2png` directly:
+### Build
+```bash
+make build
+````
 
 ```bash
-go install github.com/fUS1ONd/pdf2png@latest
+make clean
 ```
 
-This command will download the source code, build the application, and place the executable in your Go bin directory.
-
-### Using Git Clone
-
-You can also clone the repository and build it manually:
+### Run Example
 
 ```bash
-git clone https://github.com/fUS1ONd/pdf2png.git
-cd pdf2png
-go build -o pdf2png
+make run
 ```
 
-After building, the `pdf2png` executable will be available in the current directory.
-
-### Using Precompiled Binaries
-
-Precompiled binaries for various platforms are available in the [releases section](https://github.com/fUS1ONd/pdf2png/releases). Download the appropriate binary for your operating system and architecture.
-
-## Usage
-
-After installation, you can use `pdf2png` from the command line:
+### Run Tests
 
 ```bash
-pdf2png input.pdf output_directory
+make test
 ```
 
-This command will convert each page of `input.pdf` into a separate PNG image and save them in the specified `output_directory`.
-
-### Options
-
-* `-dpi`: Set the DPI (dots per inch) for the output images. Higher DPI values result in higher quality images.
+### Install Binary to GOPATH/bin
 
 ```bash
-pdf2png -dpi 300 input.pdf output_directory
+make install
 ```
 
-* `-help`: Display help information.
+### Manage Dependencies
 
 ```bash
-pdf2png -help
+make deps
 ```
 
-## Testing
-
-To run tests:
+### Format and Vet Code
 
 ```bash
-go test ./...
+make fmt
+make vet
 ```
 
-This will execute all available tests to ensure the tool works as expected.
+## Continuous Integration (CI)
 
-## License
+GitHub Actions automatically build and run all tests on every push and pull request to the `main` branch.
 
-This project is licensed under the GNU General Public License v2.0.
+## Makefile Targets
 
-## Contributing
-
-Contributions are welcome! Please fork the repository, make your changes, and submit a pull request.
-
-## Contact
-
-For issues or questions, please open an issue on the [GitHub repository](https://github.com/fUS1ONd/pdf2png/issues).
+* `build` — build the binary
+* `clean` — clean the project
+* `run` — build and run the example
+* `test` — run all tests (unit + E2E)
+* `install` — install the binary to GOPATH/bin
+* `deps` — update dependencies
+* `fmt` — format code
+* `vet` — check code for potential issues
