@@ -9,34 +9,26 @@ RED    := $(shell tput -T screen setaf 1)
 CYAN   := $(shell tput -T screen setaf 6)
 RESET  := $(shell tput -T screen sgr0)
 
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Windows_NT)
-    BINARY_NAME := $(BINARY_NAME).exe
-endif
-
 .PHONY: all build clean test run install deps fmt vet help test-e2e
-.PHONY: build-all build-linux build-windows build-darwin
 .DEFAULT_GOAL := help
 
-all: build
-
-build:
+build: ## Build the application binary
 	@echo "$(YELLOW)Building $(BINARY_NAME)...$(RESET)"
 	@$(GO) build $(GOFLAGS) -ldflags="$(LDFLAGS)" -o $(BINARY_NAME) .
 	@echo "$(GREEN)Build complete.$(RESET)"
 
-clean:
+clean: ## Remove built files and temporary directories
 	@echo "$(YELLOW)Cleaning project...$(RESET)"
 	@$(GO) clean
 	@rm -f $(BINARY_NAME) $(BINARY_NAME)-*
 	@rm -rf output_* example test_output
 	@echo "$(GREEN)Clean complete.$(RESET)"
 
-run: build
+run: build ## Build and run the example conversion
 	@echo "$(YELLOW)Running example...$(RESET)"
 	@./$(BINARY_NAME) -i example.pdf -o output_example -v
 
-test:
+test: ## Run all unit and end-to-end tests
 	@echo "\n$(YELLOW)Running All Tests...$(RESET)"
 	@echo "---------------------------------"
 	@echo "$(CYAN)1. Running Unit Tests...$(RESET)"
@@ -46,7 +38,7 @@ test:
 	@echo "---------------------------------"
 	@echo "$(GREEN)All tests passed successfully!$(RESET)"
 
-test-e2e: build
+test-e2e: build ## Run end-to-end tests (called by 'test')
 	@echo "  - Test: Successful conversion"
 	@./$(BINARY_NAME) -i testdata/sample.pdf -o test_output > /dev/null 2>&1 && [ -f test_output/page_001.png ] \
 		&& echo "    $(GREEN)PASS$(RESET)" \
@@ -63,40 +55,25 @@ test-e2e: build
 		&& echo "    $(GREEN)PASS$(RESET)" \
 		|| (echo "    $(RED)FAIL$(RESET)"; exit 1)
 
-deps:
+deps: ## Tidy Go module dependencies
 	@echo "$(YELLOW)Tidying Go modules...$(RESET)"
 	@$(GO) mod tidy
 	@echo "$(GREEN)Dependencies are up-to-date.$(RESET)"
 
-fmt:
+fmt: ## Format Go source code
 	@echo "$(YELLOW)Formatting code...$(RESET)"
 	@$(GO) fmt ./...
 
-vet:
+vet: ## Check Go code for suspicious constructs
 	@echo "$(YELLOW)Vetting code...$(RESET)"
 	@$(GO) vet ./...
 
-install: deps
+install: deps ## Install the application to GOPATH/bin
 	@echo "$(YELLOW)Installing $(BINARY_NAME) to GOPATH/bin...$(RESET)"
 	@$(GO) install $(GOFLAGS)
 	@echo "$(GREEN)Installation complete.$(RESET)"
 
-build-all: build-linux build-windows build-darwin
-
-build-linux:
-	@echo "$(YELLOW)Building for Linux (amd64)...$(RESET)"
-	@GOOS=linux GOARCH=amd64 $(GO) build -ldflags="$(LDFLAGS)" -o $(BINARY_NAME)-linux-amd64 .
-
-build-windows:
-	@echo "$(YELLOW)Building for Windows (amd64)...$(RESET)"
-	@GOOS=windows GOARCH=amd64 $(GO) build -ldflags="$(LDFLAGS)" -o $(BINARY_NAME)-windows-amd64.exe .
-
-build-darwin:
-	@echo "$(YELLOW)Building for macOS (amd64 & arm64)...$(RESET)"
-	@GOOS=darwin GOARCH=amd64 $(GO) build -ldflags="$(LDFLAGS)" -o $(BINARY_NAME)-darwin-amd64 .
-	@GOOS=darwin GOARCH=arm64 $(GO) build -ldflags="$(LDFLAGS)" -o $(BINARY_NAME)-darwin-arm64 .
-
-help:
+help: ## Show this help message
 	@echo "Usage: make <target>"
 	@echo ""
 	@echo "$(YELLOW)Available targets:$(RESET)"
